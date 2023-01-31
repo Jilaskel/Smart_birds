@@ -30,6 +30,9 @@ class Brain():
 
         self.coeff_for_output = 1/100
 
+        # self.neural_network_type = "One_layer"
+        self.neural_network_type = "Two_layers"
+
     def compute_inputs(self,game):
         x_closest_pipe = WINDOW_WIDTH_GAME*1.5
         bird_posX = self.bird.posX - game.all_pipes.image_size[0]
@@ -52,15 +55,33 @@ class Brain():
 
         self.input[3] = self.bird.posY
 
+        self.input[4] = self.bird.velocity
+
         # print("Distance x: "+str(self.input[0]))
         # print("Distance top: "+str(self.input[1]))
         # print("Distance bot: "+str(self.input[2]))
 
     def compute_outputs(self):
         output = 0.0
-        for i in range (self.number_of_inputs):
-            output += self.weight[i]*self.input[i]
-        output += self.bias 
+        match self.neural_network_type:
+            case "One_layer":
+                for i in range (self.number_of_inputs):
+                    output += self.weight[i]*self.input[i]
+                output += self.bias 
+
+            case "Two_layers":
+                output_int1 = 0.0
+                output_int2 = 0.0
+                for i in range (self.number_of_inputs):
+                    output_int1 += self.weight[i]*self.input[i]
+                output_int1 += self.bias
+                for i in range (self.number_of_inputs,self.number_of_inputs*2):
+                    output_int2 -= self.weight[i]*self.input[i-self.number_of_inputs]
+                output_int2 += self.bias
+
+                output += self.weight[self.number_of_inputs*2]*output_int1
+                output += self.weight[self.number_of_inputs*2+1]*output_int2
+                output += self.bias                 
 
         ouput_norm = math.tanh(output*self.coeff_for_output)
         # print(ouput_norm)

@@ -1,4 +1,5 @@
 import pygame
+import random
 from brain import * 
 from utilitaries import *
 
@@ -28,6 +29,15 @@ class Bird(pygame.sprite.Sprite):
         self.rect.x = self.posX
         self.rect.y = self.posY
 
+        self.mask_transparency = 150
+        self.mask_color = (random.random()*255, random.random()*255, random.random()*255)
+        mask = pygame.mask.from_surface(self.image0)
+        self.mask_image0 = mask.to_surface(setcolor=self.mask_color)
+        self.mask_image0.set_colorkey((0, 0, 0))
+        self.mask_image0.set_alpha(self.mask_transparency)        
+
+        self.mask_image = self.mask_image0.convert_alpha()
+
         self.brain = Brain(self)
         self.new_brain = None
 
@@ -50,6 +60,7 @@ class Bird(pygame.sprite.Sprite):
             angle = max(angle,-self.angle_max)
 
         self.image = pygame.transform.rotate(self.image0, angle)
+        self.mask_image = pygame.transform.rotate(self.mask_image0, angle)
 
     def reset(self):
         self.posX = BIRD_STARTING_POSX
@@ -62,3 +73,4 @@ class Bird(pygame.sprite.Sprite):
     def render(self):
         if self.alive:
             window_game.blit(self.image, (self.posX, self.posY))  
+            window_game.blit(self.mask_image, (self.posX, self.posY))  

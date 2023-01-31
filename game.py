@@ -17,6 +17,8 @@ class Game():
         self.score = 0
         self.best_score = 0
 
+        self.speed_factor = 1.0
+
         self.ratio_for_hitbox = 0.97
 
         self.population = Population(self)
@@ -64,6 +66,7 @@ class Game():
 
 
     def restart(self):
+        print("=== Generation n°"+str(self.generation_number)+" ===")
         self.population.next_gen()
 
         for bird in self.population.birds:
@@ -90,6 +93,10 @@ class Game():
         self.txt = self.font.render(txt,True,self.font_color)
         window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*3))   
 
+        txt = "Speed Factor: x" + str(self.speed_factor)
+        self.txt = self.font.render(txt,True,self.font_color)
+        window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*4))   
+
     def render(self):
         window.fill((0,0,0))
         window_game.fill((0,0,0))
@@ -106,8 +113,8 @@ class Game():
         pygame.display.update()
 
     def get_event(self):
-        CLOCK.tick(FPS)
-        self.timestep = CLOCK.get_time()
+        CLOCK.tick(FPS**self.speed_factor)
+        self.timestep = CLOCK.get_time()*self.speed_factor
 
         self.all_events = pygame.event.get()
         for event in self.all_events:
@@ -128,3 +135,10 @@ class Game():
                     if (event.key == K_r):
                         self.restart()
                         global_status.status = "In pause"
+
+                    if (event.key == K_RIGHT):
+                        self.speed_factor *= 2.0
+
+                    if (event.key == K_LEFT):
+                        self.speed_factor /= 2.0
+

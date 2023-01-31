@@ -17,12 +17,18 @@ class Population():
 
         self.number_of_inputs = NUMBER_OF_INPUTS
         self.number_of_weights = NUMBER_OF_WEIGHTS
-        self.mutation_rate = 0.01 # between 0 and 1
+
+        self.mutation_rate = 0.25 # between 0 and 1
 
         self.best_rate = 0.25
 
         self.timer = 0.0
-        self.live_period = 0.5
+        # self.live_period = 0.25
+        self.live_period = 0.0
+
+        # self.reproducing_mode = "One_parent"
+        # self.reproducing_mode = "Two_parents_random_choice"
+        self.reproducing_mode = "Two_parents_random_average"
 
     def live(self,game):
         self.timer += game.timestep/1000
@@ -45,37 +51,50 @@ class Population():
             self.max_fitness = max(self.max_fitness,bird.brain.fitness)
             if self.max_fitness==bird.brain.fitness:
                 self.best_bird = bird
-        print("Last best time : "+ str(int(self.best_bird.brain.fitness/1000)))
-
-    # def reproduce(self):
-    #     for bird in self.birds:
-    #         parent1 = self.select_parent()
-    #         parent2 = self.select_parent()
-
-    #         weights = np.zeros(self.number_of_weights)
-    #         for i in range(self.number_of_weights):
-    #             weights[i] = random.choice([parent1.brain.weight[i],parent2.brain.weight[i]])
-    #         bias = random.choice([parent1.brain.bias,parent2.brain.bias])
-
-    #         bird.new_brain = Brain(bird,weights,bias)
+        print("Last best time : "+ str(round(self.best_bird.brain.fitness/1000,2))+ " s")
+        print("Average time : "+ str(round(self.fitness_sum/self.number/1000,2))+" s")
 
     def reproduce(self):
-        for bird in self.birds:
-            parent1 = self.select_parent()
-            parent2 = self.select_parent()
+        match self.reproducing_mode:
+            case "One_parent":
+                for bird in self.birds:
+                    parent1 = self.select_parent()
 
-            weights = np.zeros(self.number_of_weights)
-            rand = random.random()
-            for i in range(self.number_of_weights):
-                weights[i] = rand*parent1.brain.weight[i] + (1-rand)*parent2.brain.weight[i]
-            bias = rand*parent1.brain.bias+(1-rand)*parent2.brain.bias
+                    weights = np.zeros(self.number_of_weights)
+                    for i in range(self.number_of_weights):
+                        weights[i] = parent1.brain.weight[i] 
+                    bias = parent1.brain.bias
 
-            bird.new_brain = Brain(bird,weights,bias)
+                    bird.new_brain = Brain(bird,weights,bias)     
+            case "Two_parents_random_choice":
+                for bird in self.birds:
+                    parent1 = self.select_parent()
+                    parent2 = self.select_parent()
+
+                    weights = np.zeros(self.number_of_weights)
+                    for i in range(self.number_of_weights):
+                        weights[i] = random.choice([parent1.brain.weight[i],parent2.brain.weight[i]])
+                    bias = random.choice([parent1.brain.bias,parent2.brain.bias])
+
+                    bird.new_brain = Brain(bird,weights,bias)
+            case "Two_parents_random_average": 
+                for bird in self.birds:
+                    parent1 = self.select_parent()
+                    parent2 = self.select_parent()
+
+                    weights = np.zeros(self.number_of_weights)
+                    rand = random.random()
+                    for i in range(self.number_of_weights):
+                        weights[i] = rand*parent1.brain.weight[i] + (1-rand)*parent2.brain.weight[i]
+                    bias = rand*parent1.brain.bias+(1-rand)*parent2.brain.bias
+
+                    bird.new_brain = Brain(bird,weights,bias)
+      
 
     def mutate(self):
         for bird in self.birds:
             rand = random.random()
-            if rand>self.mutation_rate:
+            if rand<self.mutation_rate:
                 rand_int = random.randint(0,self.number_of_weights)
                 if rand_int<self.number_of_weights:
                     bird.new_brain.weight[rand_int] = random.random()*random.choice([-1,1])
