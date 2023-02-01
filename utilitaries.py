@@ -61,8 +61,8 @@ NUMBER_OF_WEIGHTS = 12
 
 class Global_status():
     def __init__(self):
-        self.status = "In pause"
-        # self.status = "Learning"
+        # self.status = "In pause"
+        self.status = "Learning"
 
 global_status = Global_status()
 

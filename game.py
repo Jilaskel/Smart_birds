@@ -18,6 +18,7 @@ class Game():
         self.best_score = 0
 
         self.speed_factor = 1.0
+        self.gravity_coeff = 2.0
 
         self.ratio_for_hitbox = 0.97
 
@@ -97,6 +98,10 @@ class Game():
         self.txt = self.font.render(txt,True,self.font_color)
         window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*4))   
 
+        txt = "Gravity: x" + str(self.gravity_coeff)
+        self.txt = self.font.render(txt,True,self.font_color)
+        window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*5)) 
+
     def render(self):
         window.fill((0,0,0))
         window_game.fill((0,0,0))
@@ -142,3 +147,8 @@ class Game():
                     if (event.key == K_LEFT):
                         self.speed_factor /= 2.0
 
+                    if (event.key == K_UP):
+                        self.gravity_coeff *= 2.0
+
+                    if (event.key == K_DOWN):
+                        self.gravity_coeff /= 2.0

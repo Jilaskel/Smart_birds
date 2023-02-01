@@ -44,7 +44,7 @@ class Bird(pygame.sprite.Sprite):
     def move(self,game):
         self.timer += game.timestep
 
-        self.velocity += GRAVITY_ACCELERATION*game.timestep/1000
+        self.velocity += GRAVITY_ACCELERATION*game.gravity_coeff*game.timestep/1000
         self.posY += self.velocity*game.timestep/1000
         self.rect.y = self.posY
         self.rotate()
