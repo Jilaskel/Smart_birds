@@ -8,7 +8,7 @@ class Neural_network():
 
         self.node_color = (0,255,0)
         self.radius = 20*RESIZE_COEFF_GAME
-        self.width_circle = int(2*RESIZE_COEFF_GAME)
+        self.width_circle = max(int(2*RESIZE_COEFF_GAME),1)
 
         self.pos_conn_color = (0,153,0)
         self.neg_conn_color = (153,0,0)
@@ -48,14 +48,6 @@ class Neural_network():
         self.connections.append(Connection(self,self.layer_node_1,self.output_node,NUMBER_OF_INPUTS*2,0,2))
         self.connections.append(Connection(self,self.layer_node_2,self.output_node,NUMBER_OF_INPUTS*2+1,0,2))
 
-
-
-    # def connect_with_brain(self,brain):
-    #     self.brain = brain 
-
-    #     self.connections = []
-    #     for i in range (NUMBER_OF_INPUTS):
-    #         self.connections.append(Connection(self,self.nodes[i],self.layer_node_1,i,self.brain.input[i],self.brain.output_int1))
 
 
     def render(self):
