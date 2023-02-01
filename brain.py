@@ -11,6 +11,7 @@ class Brain():
 
         self.number_of_inputs = NUMBER_OF_INPUTS
         self.number_of_weights = NUMBER_OF_WEIGHTS
+
         self.weight = np.zeros(self.number_of_weights)
         if len(weights)==0:
             for i in range (self.number_of_weights):
@@ -24,8 +25,17 @@ class Brain():
             self.bias = random.random()*random.choice([-1,1])
 
         self.input = np.zeros(self.number_of_inputs)
+        self.input_txt = []
+        self.input_txt.append('dx :')
+        self.input_txt.append('dy_top :')
+        self.input_txt.append('dy_bot :')
+        self.input_txt.append('pos_y :')
+        self.input_txt.append('dy/dt :')
 
-        self.output = 0
+
+        self.last_output = 0
+        self.output = np.zeros(3)
+
         self.treshold_output = 0.5
 
         self.coeff_for_output = 1/100
@@ -62,31 +72,33 @@ class Brain():
         # print("Distance bot: "+str(self.input[2]))
 
     def compute_outputs(self):
-        output = 0.0
+        self.output[:] = 0.0
         match self.neural_network_type:
             case "One_layer":
                 for i in range (self.number_of_inputs):
-                    output += self.weight[i]*self.input[i]
-                output += self.bias 
+                    self.output[0] += self.weight[i]*self.input[i]
+                self.output[0] += self.bias 
+
+                self.last_output = self.output[0]             
 
             case "Two_layers":
-                output_int1 = 0.0
-                output_int2 = 0.0
                 for i in range (self.number_of_inputs):
-                    output_int1 += self.weight[i]*self.input[i]
-                output_int1 += self.bias
+                    self.output[0] += self.weight[i]*self.input[i]
+                self.output[0] += self.bias
                 for i in range (self.number_of_inputs,self.number_of_inputs*2):
-                    output_int2 -= self.weight[i]*self.input[i-self.number_of_inputs]
-                output_int2 += self.bias
+                    self.output[1] -= self.weight[i]*self.input[i-self.number_of_inputs]
+                self.output[1] += self.bias
 
-                output += self.weight[self.number_of_inputs*2]*output_int1
-                output += self.weight[self.number_of_inputs*2+1]*output_int2
-                output += self.bias                 
+                self.output[2] += self.weight[self.number_of_inputs*2]*self.output[0]
+                self.output[2] += self.weight[self.number_of_inputs*2+1]*self.output[1]
+                self.output[2] += self.bias  
 
-        ouput_norm = math.tanh(output*self.coeff_for_output)
+                self.last_output = self.output[2]             
+
+        self.output_norm = math.tanh(self.last_output*self.coeff_for_output)
         # print(ouput_norm)
 
-        if (ouput_norm>self.treshold_output):
+        if (self.output_norm>self.treshold_output):
             self.bird.flap()
 
     def compute_fitness(self):

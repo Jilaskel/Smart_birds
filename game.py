@@ -1,8 +1,10 @@
 import pygame
+import random
 from pygame.locals import *
 from population import * 
 from bird import * 
 from pipe import * 
+from neural_network import * 
 from utilitaries import *
 
 ############################# 
@@ -26,7 +28,13 @@ class Game():
         self.number_alive = self.population.number
         self.generation_number = 1
 
+        self.my_bird = random.choice(self.population.birds)
+
         self.all_pipes = All_pipes()
+
+        self.neural_network = Neural_network(self.my_bird.brain)
+        # self.neural_network.brain = self.my_bird.brain
+
 
         self.font_size = int(100*RESIZE_COEFF_GAME)
         self.font = pygame.font.Font(FONT_PATH,self.font_size)
@@ -45,6 +53,7 @@ class Game():
 
     def check_impact(self):
         self.number_alive = 0
+        self.birds_alive = []
         for bird in self.population.birds:
             if bird.alive:
                 self.hit = pygame.sprite.spritecollide(bird, self.all_pipes, False,pygame.sprite.collide_rect_ratio(self.ratio_for_hitbox))
@@ -57,6 +66,7 @@ class Game():
                     bird.alive = False
                 
                 self.number_alive += 1
+                self.birds_alive.append(bird)
 
         if self.number_alive==0:
             # global_status.status = "In pause" 
@@ -96,11 +106,11 @@ class Game():
 
         txt = "Speed Factor: x" + str(self.speed_factor)
         self.txt = self.font.render(txt,True,self.font_color)
-        window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*4))   
+        window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*5))   
 
         txt = "Gravity: x" + str(self.gravity_coeff)
         self.txt = self.font.render(txt,True,self.font_color)
-        window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*5)) 
+        window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*6)) 
 
     def render(self):
         window.fill((0,0,0))
@@ -114,6 +124,12 @@ class Game():
         self.display_text()
 
         window.blit(window_game,(0,0))
+
+        if self.birds_alive:
+            if not self.my_bird.alive:
+                self.my_bird = random.choice(self.birds_alive)
+            self.neural_network.brain = self.my_bird.brain
+            self.neural_network.render()
 
         pygame.display.update()
 
