@@ -20,7 +20,12 @@ class Game():
         self.best_score = 0
 
         self.speed_factor = 1.0
-        self.gravity_coeff = 2.0
+        self.gravity_factor = 2.0
+        self.pipe_space_factor = 1.0
+
+        self.mutation_rate = INITIAL_MUTATION_RATE
+        self.population_number = INITIAL_POPULATION
+        self.best_rate = INITIAL_BEST_RATE
 
         self.ratio_for_hitbox = 0.97
 
@@ -30,7 +35,7 @@ class Game():
 
         self.my_bird = random.choice(self.population.birds)
 
-        self.all_pipes = All_pipes()
+        self.all_pipes = All_pipes(self)
 
         self.neural_network = Neural_network(self.my_bird.brain)
         # self.neural_network.brain = self.my_bird.brain
@@ -104,13 +109,29 @@ class Game():
         self.txt = self.font.render(txt,True,self.font_color)
         window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*3))   
 
-        txt = "Speed Factor: x" + str(self.speed_factor)
+        txt = "Speed : x" + str(self.speed_factor) + " (Left/Right)"
         self.txt = self.font.render(txt,True,self.font_color)
         window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*5))   
 
-        txt = "Gravity: x" + str(self.gravity_coeff)
+        txt = "Gravity: x" + str(self.gravity_factor) + " (Up/Down)"
         self.txt = self.font.render(txt,True,self.font_color)
         window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*6)) 
+
+        txt = "Pipe Space: x" + str(self.pipe_space_factor) + " (Z/S)"
+        self.txt = self.font.render(txt,True,self.font_color)
+        window.blit(self.txt,(self.font_pos[0],self.font_pos[1]+self.font_margin*7)) 
+
+        txt = "Population size : " + str(self.population_number) + " (U/J)"
+        self.txt = self.font.render(txt,True,self.font_color)
+        window.blit(self.txt,(WINDOW_WIDTH_GAME+self.font_pos[0],self.font_pos[1]+self.font_margin*5))   
+
+        txt = "Mutation rate : " + str(round(self.mutation_rate,2)) + " (T/G)"
+        self.txt = self.font.render(txt,True,self.font_color)
+        window.blit(self.txt,(WINDOW_WIDTH_GAME+self.font_pos[0],self.font_pos[1]+self.font_margin*6))   
+
+        txt = "Best bird reproduction rate : " + str(round(self.best_rate,2)) + " (R/F)"
+        self.txt = self.font.render(txt,True,self.font_color)
+        window.blit(self.txt,(WINDOW_WIDTH_GAME+self.font_pos[0],self.font_pos[1]+self.font_margin*7))   
 
     def render(self):
         window.fill((0,0,0))
@@ -153,9 +174,9 @@ class Game():
                         if (global_status.status == "In pause"):
                             global_status.status = "Learning"
                     
-                    if (event.key == K_r):
-                        self.restart()
-                        global_status.status = "In pause"
+                    # if (event.key == K_r):
+                    #     self.restart()
+                    #     global_status.status = "In pause"
 
                     if (event.key == K_RIGHT):
                         self.speed_factor *= 2.0
@@ -164,7 +185,40 @@ class Game():
                         self.speed_factor /= 2.0
 
                     if (event.key == K_UP):
-                        self.gravity_coeff *= 2.0
+                        self.gravity_factor *= 2.0
 
                     if (event.key == K_DOWN):
-                        self.gravity_coeff /= 2.0
+                        self.gravity_factor /= 2.0
+
+                    if (event.key == K_z):
+                        self.pipe_space_factor += 0.25
+
+                    if (event.key == K_s):
+                        self.pipe_space_factor -= 0.25
+
+                    if (event.key == K_t):
+                        self.mutation_rate += 0.05
+                        self.mutation_rate = min(self.mutation_rate,1.0)
+
+                    if (event.key == K_g):
+                        self.mutation_rate -= 0.05
+                        self.mutation_rate = max(self.mutation_rate,0.0)
+
+                    if (event.key == K_r):
+                        self.best_rate += 0.05
+                        self.best_rate = min(self.best_rate,1.0)
+
+                    if (event.key == K_f):
+                        self.best_rate -= 0.05
+                        self.best_rate = max(self.best_rate,0.0)
+
+                    if (event.key == K_u):
+                        self.population_number += 5
+                        for i in range(5):
+                            self.population.birds.append(Bird())
+
+                    if (event.key == K_j):
+                        if self.population_number>5:
+                            self.population_number -= 5
+                            for i in range(5):
+                                self.population.birds.pop(1)                            

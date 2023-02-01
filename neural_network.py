@@ -21,9 +21,9 @@ class Neural_network():
         self.font_pos = np.zeros((NUMBER_OF_INPUTS,2))
         self.font_margin = WINDOW_HEIGHT_GAME*0.05
 
-        self.center_input = vec(WINDOW_WIDTH *0.65, WINDOW_HEIGHT *0.1)
-        self.center_layer_one = vec(WINDOW_WIDTH *0.80, WINDOW_HEIGHT *0.1)
-        self.center_output = vec(WINDOW_WIDTH *0.95, WINDOW_HEIGHT *0.1)
+        self.center_input = vec(WINDOW_WIDTH *0.65, WINDOW_HEIGHT *0.05)
+        self.center_layer_one = vec(WINDOW_WIDTH *0.80, WINDOW_HEIGHT *0.05)
+        self.center_output = vec(WINDOW_WIDTH *0.95, WINDOW_HEIGHT *0.05)
 
         self.margin = WINDOW_HEIGHT*0.1
 

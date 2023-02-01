@@ -9,7 +9,7 @@ class Population():
     def __init__(self,game):
         self.game = game
 
-        self.number = 100
+        self.number = game.population_number
 
         self.birds = []
         for i in range(self.number):
@@ -18,9 +18,7 @@ class Population():
         self.number_of_inputs = NUMBER_OF_INPUTS
         self.number_of_weights = NUMBER_OF_WEIGHTS
 
-        self.mutation_rate = 0.25 # between 0 and 1
-
-        self.best_rate = 0.25
+        self.best_rate = game.best_rate
 
         self.timer = 0.0
         # self.live_period = 0.25
@@ -94,7 +92,7 @@ class Population():
     def mutate(self):
         for bird in self.birds:
             rand = random.random()
-            if rand<self.mutation_rate:
+            if rand<self.game.mutation_rate:
                 rand_int = random.randint(0,self.number_of_weights)
                 if rand_int<self.number_of_weights:
                     bird.new_brain.weight[rand_int] = random.random()*random.choice([-1,1])

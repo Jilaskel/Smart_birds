@@ -7,8 +7,8 @@ vec = pygame.math.Vector2 #2 for two dimensional
 RUNNING = True
 
 ### RESOLUTION
-WINDOW_WIDTH = 1920
-WINDOW_HEIGHT = 1080
+WINDOW_WIDTH = 1920*0.8
+WINDOW_HEIGHT = 1080*0.8
 
 
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -59,6 +59,10 @@ FONT_NUMERIC_PATH = "images/font/TrenchThin-16R0.otf"
 
 NUMBER_OF_INPUTS = 5
 NUMBER_OF_WEIGHTS = 12
+
+INITIAL_POPULATION = 50
+INITIAL_MUTATION_RATE = 0.25
+INITIAL_BEST_RATE = 0.25
 
 class Global_status():
     def __init__(self):

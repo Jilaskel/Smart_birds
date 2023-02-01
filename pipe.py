@@ -4,8 +4,9 @@ from utilitaries import *
 
 
 class All_pipes(pygame.sprite.Group):
-        def __init__(self):
+        def __init__(self,game):
             pygame.sprite.Group.__init__(self)  
+            self.game = game
 
             posX = PIPE_STARTING_POSX
             posY = PIPE_STARTING_POSY
@@ -21,8 +22,8 @@ class All_pipes(pygame.sprite.Group):
             self.add_two_pipes(posX,posY)
 
         def add_two_pipes(self,posX,posY):
-            posY_top = posY - PIPE_SPACE_Y*0.5 - self.image_size[1]
-            posY_bot = posY + PIPE_SPACE_Y*0.5
+            posY_top = posY - self.game.pipe_space_factor*PIPE_SPACE_Y*0.5 - self.image_size[1]
+            posY_bot = posY + self.game.pipe_space_factor*PIPE_SPACE_Y*0.5
 
             self.add(Pipe(self,posX,posY_top,True))
             self.add(Pipe(self,posX,posY_bot,False))
